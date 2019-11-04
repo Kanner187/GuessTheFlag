@@ -16,6 +16,7 @@ struct ContentView: View {
     @State private var scoreTitle = ""
     @State private var score = 0
     @State private var alertMessage = ""
+    @State private var animationAmount = 0.0
     
     
     
@@ -37,7 +38,7 @@ struct ContentView: View {
                              .fontWeight(.black)
                           }
                             
-                 ForEach(0..<3){number in
+                    ForEach(0..<3){number in
                      Button(action: {
                          //Flag tapped implementation
                         self.flagTapped(number){
@@ -52,6 +53,11 @@ struct ContentView: View {
                  .clipShape(Capsule())     //Puts the buttons in a capsule shape
                  .overlay(Capsule().stroke(Color.black , lineWidth: 1))      //Add capsule styled border around flags
                  .shadow(color: .black, radius: 2, x: 2, y: 2)
+                 .rotation3DEffect(.degrees(self.animationAmount), axis: (x: 0, y: 1, z: 0))
+                
+                    
+                    
+                    //Alert
                  .alert(isPresented: $showingScore) {
                     Alert(title: Text(scoreTitle), message: Text("\(self.alertMessage)"), dismissButton: .default(Text("Continue")){
                          self.askQuestion()
@@ -65,16 +71,18 @@ struct ContentView: View {
                  }
              }
         }
- 
     }
     
     
     //Methods
     func flagTapped(_ number: Int , message : (String)-> Void){
         if number == correctAnswer {
-            scoreTitle = "That's Correct"
-            score += 1
-            message("You're a genius!")
+            withAnimation {
+                self.animationAmount += 360
+                scoreTitle = "That's Correct"
+                score += 1
+                message("You're a genius!")
+            }
             
         }else{
             scoreTitle = "Wrong"
